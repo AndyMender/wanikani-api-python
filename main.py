@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
 
     # Load API token
-    HTTP_HEADERS["Authorization"].format(api_token=args.api_token)
+    HTTP_HEADERS["Authorization"] = HTTP_HEADERS["Authorization"].format(api_token=args.api_token)
 
     # execute requests
     # NOTE: add throttling to avoid being blocked by API server
