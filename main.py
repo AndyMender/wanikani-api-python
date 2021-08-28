@@ -4,6 +4,7 @@
 """
 
 import argparse
+import logging
 import time
 from pprint import pprint
 
@@ -30,21 +31,63 @@ if __name__ == "__main__":
     # Set up command-line args
     parser = argparse.ArgumentParser(description='Python client to WaniKani API.')
     parser.add_argument("api_token", type=str, help="User API token.")
+    parser.add_argument("--level", type=int, default=0, help="WaniKani level.")
+    parser.add_argument(
+        "--items",
+        type=str,
+        default="",
+        help="Comma-separated (no spaces!) list of WaniKani item types (kanji, vocabulary, radical)."
+    )
     args = parser.parse_args()
 
-
-    # Load API token
+    # Load API token into headers
     HTTP_HEADERS["Authorization"] = HTTP_HEADERS["Authorization"].format(api_token=args.api_token)
 
-    # execute requests
-    # NOTE: add throttling to avoid being blocked by API server
-    r = requests.get(API_SUBJECTS, headers=HTTP_HEADERS)
+    # Assemble query
+    url = API_SUBJECTS
+    if args.level or args.items:
+        url += "?"
 
+    if args.items:
+        url += f"types={args.items}"
+    
+    if "types" in url:
+        url += "&"
+
+    if args.level > 0:
+        url += f"level={args.level}"
+
+    # Execute requests
+    # NOTE: add throttling to avoid being blocked by API server?
+    r = requests.get(url, headers=HTTP_HEADERS)
     r_json = r.json()
-    # pprint(r_json["data"])
-    if "data" in r_json:
-        df = pd.DataFrame(r_json["data"])
-    else:
-        print("Failed API call. Aborting!")
+
+    if "data" not in r_json:
+        logging.critical(f"Failed to get items for URL: {url}")
+        logging.critical(r.text)
         exit(1)
+
+    data: list = r_json["data"]
+    pprint(data[:2])
+
+    # TODO: Filter out/flatten "data" field of each item to extract useful info
+    filtered_data = []
+    for el in data[:20]:     # type: dict
+        filtered_data.append(
+            {
+                "WK Level": el["data"]["level"],
+                "Spelling": el["data"]["characters"],       # kanji
+                **{f"Reading {i}": reading["reading"] for i, reading in enumerate(el["data"]["readings"])},
+                **{f"Meaning {i}": meaning["meaning"] for i, meaning in enumerate(el["data"]["meanings"])}
+            }
+        )
+
+    pprint(filtered_data)
+
+    # Convert to pandas.DataFrame
+    df = pd.DataFrame(filtered_data)
     print(df)
+
+    # Filter content
+    # print(df[df["object"] == "kanji"])
+    # print(df)
