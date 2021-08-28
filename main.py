@@ -7,6 +7,7 @@ import argparse
 import time
 from pprint import pprint
 
+import pandas as pd
 import requests
 
 
@@ -37,7 +38,13 @@ if __name__ == "__main__":
 
     # execute requests
     # NOTE: add throttling to avoid being blocked by API server
-    r = requests.get(API_SUBJECTS + "/2", headers=HTTP_HEADERS)
+    r = requests.get(API_SUBJECTS, headers=HTTP_HEADERS)
 
     r_json = r.json()
-    pprint(r_json)
+    # pprint(r_json["data"])
+    if "data" in r_json:
+        df = pd.DataFrame(r_json["data"])
+    else:
+        print("Failed API call. Aborting!")
+        exit(1)
+    print(df)
