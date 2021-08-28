@@ -20,6 +20,9 @@ HTTP_HEADERS = {
 # Endpoints
 API_MAIN = "https://api.wanikani.com/v2/"
 API_RESETS = API_MAIN + "resets"
+API_REVIEWS = API_MAIN + "reviews"
+API_STUDY_MATERIALS = API_MAIN + "study_materials"
+API_SUBJECTS = API_MAIN + "subjects"
 
 
 if __name__ == "__main__":
@@ -34,7 +37,7 @@ if __name__ == "__main__":
 
     # execute requests
     # NOTE: add throttling to avoid being blocked by API server
-    r = requests.get(API_RESETS, headers=HTTP_HEADERS)
+    r = requests.get(API_SUBJECTS + "/2", headers=HTTP_HEADERS)
 
     r_json = r.json()
     pprint(r_json)
