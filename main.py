@@ -77,8 +77,8 @@ if __name__ == "__main__":
     logging.info(f"Full WaniKani URL: {url}")
 
     # Execute requests
-    # NOTE: add throttling to avoid being blocked by API server?
     r = requests.get(url, headers=HTTP_HEADERS)
+    time.sleep(0.5)
     r_json: dict = r.json()
 
     # Extract main "data" field from JSON response
