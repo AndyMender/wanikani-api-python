@@ -72,7 +72,7 @@ if __name__ == "__main__":
         url += "&"
 
     if args.levels:
-        url += f"levels={args.level}"
+        url += f"levels={args.levels}"
 
     logging.info(f"Full WaniKani URL: {url}")
 

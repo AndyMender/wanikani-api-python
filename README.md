@@ -10,7 +10,14 @@ Official WaniKani API documentation: https://docs.api.wanikani.com/20170710/#int
 ```shell
 python3 -m pip install --user -r requirements.txt
 ```
-2. Run main script:
+2a. Run main script:
 ```shell
 python3 main.py <your_api_token>
+```
+2b. Run main script with level and item type selection:
+```shell
+for i in {1..10}
+do
+    python3 main.py "$BEARER_TOKEN" --levels $i --items "vocabulary"
+done
 ```
