@@ -18,6 +18,6 @@ python3 main.py <your_api_token>
 ```shell
 for i in {1..10}
 do
-    python3 main.py "$BEARER_TOKEN" --levels $i --items "vocabulary"
+    python3 main.py "$BEARER_TOKEN" --levels "$i" --items "vocabulary"
 done
 ```
